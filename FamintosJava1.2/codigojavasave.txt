@@ -1,0 +1,136 @@
+private void Cadastrar() {
+        String nome, senha, email, funcao, cpf, admissao;
+
+        nome = txtNome.getText();
+        senha = txtSenha.getText();
+        email = txtEmail.getText();
+        funcao = txtFuncao.getSelectedItem().toString();
+        cpf = txtCPF.getText();
+        admissao = txtAdmissao.getText();
+
+        
+        
+        if ((nome.isEmpty()) || (senha.isEmpty()) || (email.isEmpty()) || (funcao.isEmpty() || (cpf.isEmpty()) || (admissao.isEmpty()))) {
+            JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatórios! Aguarde 5 segundos para tentar refazer o cadastro...");
+            cadastre.setEnabled(false);
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e) {
+                }
+                cadastre.setEnabled(true);
+        } else {
+
+            String cpfF2 = cpf.replaceAll("[^0-9]+", "");
+            int check = cpfF2.length();
+            if (check != 11) {
+                JOptionPane.showMessageDialog(null, "CPF inválido! Aguarde 5 segundos para tentar refazer o cadastro...");
+                cadastre.setEnabled(false);
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e) {
+                }
+                cadastre.setEnabled(true);
+
+            } else if (!email.contains("@") || !email.contains(".com")) {
+                JOptionPane.showMessageDialog(null, "Email inválido! Aguarde 5 segundos para tentar refazer o cadastro...");
+                cadastre.setEnabled(false);
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e) {
+                }
+                cadastre.setEnabled(true);
+            } else {
+                String cpfForm1 = cpfF2.substring(0, 3);
+                String cpfForm2 = cpfF2.substring(3, 6);
+                String cpfForm3 = cpfF2.substring(6, 9);
+                String cpfForm4 = cpfF2.substring(9, 11);
+                cpf = cpfForm1 + "." + cpfForm2 + "." + cpfForm3 + "-" + cpfForm4;
+
+                UsuarioDTO objusuarioDTO = new UsuarioDTO();
+                objusuarioDTO.setEmail(email);
+                objusuarioDTO.setCpf(cpf);
+
+                UsuarioDAO objusuarioDAO = new UsuarioDAO();
+                ResultSet rsuserdao = objusuarioDAO.checarDados(objusuarioDTO);
+
+                try {
+                    if (rsuserdao.next()) {
+                        String emails = rsuserdao.getString(5);
+                        String cpfs = rsuserdao.getString(7);
+                        if (emails.equals(email)) {
+                            JOptionPane.showMessageDialog(null, "Email já cadastrado! Aguarde 5 segundos para tentar refazer o cadastro...");
+                            cadastre.setEnabled(false);
+                            try {
+                                TimeUnit.SECONDS.sleep(5);
+                            } catch (InterruptedException e) {
+                            }
+                            cadastre.setEnabled(true);
+                        } else if (cpfs.equals(cpf)) {
+                            JOptionPane.showMessageDialog(null, "CPF já cadastrado! Aguarde 5 segundos para tentar refazer o cadastro...");
+                            cadastre.setEnabled(false);
+                            try {
+                                TimeUnit.SECONDS.sleep(5);
+                            } catch (InterruptedException e) {
+                            }
+                            cadastre.setEnabled(true);
+                        }
+                    }
+                } catch (SQLException erro) {
+                    JOptionPane.showMessageDialog(null, erro);
+                }
+            }
+        }
+
+        String confirmar = admissao.replaceAll("[^0-9]+", "");
+
+        String dia = confirmar.substring(0, 2);
+        String mes = confirmar.substring(2, 4);
+        String ano = confirmar.substring(4, 8);
+        String confs = ano + "-" + mes + "-" + dia;
+        System.out.println(confs);
+
+        if (confirmar.length() != 8) {
+            JOptionPane.showMessageDialog(null, "Data inválida! Aguarde 5 segundos para tentar refazer o cadastro...");
+            cadastre.setEnabled(false);
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e) {
+                }
+               cadastre.setEnabled(true);
+        } else if (funcao.equals("Selecionar")) {
+            JOptionPane.showMessageDialog(null, "Você não selecionou uma função! Aguarde 5 segundos para tentar refazer o cadastro...");
+            cadastre.setEnabled(false);
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e) {
+                }
+                cadastre.setEnabled(true);
+        } else if (senha.length() < 8) {
+            JOptionPane.showMessageDialog(null, "Senha com menos que 8 digitos é inválida! Aguarde 5 segundos para tentar refazer o cadastro...");
+            cadastre.setEnabled(false);
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e) {
+                }
+                cadastre.setEnabled(true);
+        } else {
+            UsuarioDTO objusuarioDTO = new UsuarioDTO();
+            objusuarioDTO.setNome(nome);
+            objusuarioDTO.setSenha(senha);
+            objusuarioDTO.setEmail(email);
+            objusuarioDTO.setCpf(cpf);
+            objusuarioDTO.setFuncao(funcao);
+            objusuarioDTO.setAdmissao(confs);
+
+            UsuarioDAO objusuarioDAO = new UsuarioDAO();
+            objusuarioDAO.cadastrarUser(objusuarioDTO);
+            JOptionPane.showMessageDialog(null, "Usuário adicionado com sucesso!");
+
+            txtNome.setText(null);
+            txtSenha.setText(null);
+            txtEmail.setText(null);
+            txtCPF.setText(null);
+            txtAdmissao.setText(null);
+            txtFuncao.setSelectedIndex(0);
+        }
+    }

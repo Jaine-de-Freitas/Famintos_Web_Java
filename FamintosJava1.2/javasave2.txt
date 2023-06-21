@@ -1,0 +1,55 @@
+if (confirmar.length() != 8) {
+                            JOptionPane.showMessageDialog(null, "Data digitada é inválida!");
+                        } else {
+                            Date dataHoraAtual = new Date();
+                            String data = new SimpleDateFormat("dd/MM/yyyy").format(dataHoraAtual);
+                            String anoSistema = data.substring(6, 10);
+                            int anosSistema = Integer.parseInt(anoSistema);
+
+                            String cpfForm1 = cpfF2.substring(0, 3);
+                            String cpfForm2 = cpfF2.substring(3, 6);
+                            String cpfForm3 = cpfF2.substring(6, 9);
+                            String cpfForm4 = cpfF2.substring(9, 11);
+                            cpf = cpfForm1 + "." + cpfForm2 + "." + cpfForm3 + "-" + cpfForm4;
+
+                            String dia = confirmar.substring(0, 2);
+                            String mes = confirmar.substring(2, 4);
+                            String ano = confirmar.substring(4, 8);
+                            String addata = ano + "-" + mes + "-" + dia;
+
+                            if (dia.length() != 2 || mes.length() != 2 || ano.length() != 4) {
+                                JOptionPane.showMessageDialog(null, "Data digitada é inválida!");
+                            } else {
+
+                                int dias = Integer.parseInt(dia);
+                                int meses = Integer.parseInt(mes);
+                                int anos = Integer.parseInt(ano);
+                                if (meses < 0 || meses > 12 || dias < 0 || dias > 31 || anos > anosSistema) {
+                                    JOptionPane.showMessageDialog(null, "Data digitada é inválida!");
+                                } else if (senha.length() < 8) {
+                                    JOptionPane.showMessageDialog(null, "Senha com menos que 8 digitos é inválida!");
+                                } else if (funcao.equals("Selecionar")) {
+                                    JOptionPane.showMessageDialog(null, "Você não selecionou uma função!");
+                                } else {
+                                    nome = txtNome.getText();
+                                    senha = txtSenha.getText();
+                                    email = txtEmail.getText();
+                                    funcao = txtFuncao.getSelectedItem().toString();
+                                    
+                                    objusuarioDTO.setEmail(email);
+                                    objusuarioDTO.setCpf(cpf);
+                                    objusuarioDTO.setNome(nome);
+                                    objusuarioDTO.setSenha(senha);
+                                    objusuarioDTO.setFuncao(funcao);
+                                    objusuarioDTO.setAdmissao(addata);
+                                    
+                                    objusuarioDAO.cadastrarUser(objusuarioDTO);
+                                    
+                                    JOptionPane.showMessageDialog(null, "Usuário adicionado com sucesso!");
+                                    
+                                    txtNome.setText(null);
+                                    txtSenha.setText(null);
+                                    txtEmail.setText(null);
+                                    txtCPF.setText(null);
+                                    txtAdmissao.setText(null);
+                                    txtFuncao.setSelectedIndex(0);
